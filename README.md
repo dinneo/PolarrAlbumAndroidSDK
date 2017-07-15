@@ -5,6 +5,16 @@ This SDK includes a starter project (co.polarr.albumsdkdemo) that calls the Andr
 
 The minimum Android API Level is 14 (4.0.3).
 
+## License
+The SDK included in this repository must not be used for any commercial purposes without the direct written consent of Polarr, Inc. The current version of the SDK expires on September 30, 2017. For pricing and more info regarding the full license SDK, please email [info@polarr.co](mailto:info@polarr.co).
+
+## Functionalities
+### Tagging a photo
+![Tagging a photo](https://user-images.githubusercontent.com/5923363/28239964-69369e06-69aa-11e7-9092-3ca7d0901378.gif)
+
+### Grouping photos
+![Grouping photos](https://user-images.githubusercontent.com/5923363/28239963-66cebc84-69aa-11e7-9809-47147ec6ac26.gif)
+
 ## Add dependencies to Gradle
 ```groovy
 repositories {
