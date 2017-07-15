@@ -24,7 +24,7 @@ public class GroupingActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         groupCon.setLayoutManager(linearLayoutManager);
 
-        List<List<File>> photoFiles = (List<List<File>>) MemoryCache.pick("group_files");
+        List<List<File>> photoFiles = (List<List<File>>) MemoryCache.get("group_files");
 
         groupCon.setAdapter(new GroupPhotoAdapter(GroupingActivity.this, photoFiles));
     }

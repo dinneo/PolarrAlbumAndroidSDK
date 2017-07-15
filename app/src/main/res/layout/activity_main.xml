@@ -19,7 +19,7 @@
                 android:id="@+id/btn_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag" />
+                android:text="Tagging" />
 
             <Button
                 android:id="@+id/btn_import"
@@ -31,7 +31,7 @@
                 android:id="@+id/btn_group_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Similar photos" />
+                android:text="Grouping result" />
         </LinearLayout>
 
         <ImageView

@@ -1,12 +1,16 @@
 package co.polarr.albumsdkdemo;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +33,9 @@ import co.polarr.utils.MemoryCache;
 import co.polarr.utils.ThreadManager;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_PHOTO = 1;
+    private static final int REQUEST_PHOTOS = 2;
+
     /**
      * debug log view
      */
@@ -74,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
      * photo folder chooser
      */
     private void selectPhotos() {
+        if (!checkAndRequirePermission(REQUEST_PHOTOS)) {
+            return;
+        }
         new ChooserDialog().with(this)
                 .withFilter(true, false)
                 .withStartFile(Environment.getExternalStorageDirectory().getPath() + "/DCIM")
@@ -91,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
      * photo chooser
      */
     private void selectPhoto() {
+        if (!checkAndRequirePermission(REQUEST_PHOTO)) {
+            return;
+        }
         new ChooserDialog().with(this)
                 .withFilter(false, false, "jpg", "jpeg", "png")
                 .withStartFile(Environment.getExternalStorageDirectory().getPath() + "/DCIM")
@@ -102,6 +115,35 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .build()
                 .show();
+    }
+
+    private boolean checkAndRequirePermission(int permissionRequestId) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    permissionRequestId);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PHOTO && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectPhoto();
+            }
+        } else if (requestCode == REQUEST_PHOTOS && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectPhotos();
+            }
+        }
     }
 
     /**
@@ -163,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, Object> taggingResult = TaggingUtil.tagPhoto(getAssets(), file);
                 result.putAll(taggingResult);
                 output("\tLabel_top3: " + taggingResult.get("label_top3"));
+
+                output("end processing.");
             }
         });
     }
@@ -246,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 });
+
+                output("end processing.\nClick 'Grouping result' button to see the result.");
             }
         });
     }
