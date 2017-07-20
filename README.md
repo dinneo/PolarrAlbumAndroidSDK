@@ -26,7 +26,7 @@ Similar photos are grouped together based on their subjects, features, colors, a
 ### Auto enhance photos
 Photos can be auto-enhanced based on their extracted features.
 
-![Auto enhance photo](https://user-images.githubusercontent.com/5923363/28404213-f883f96a-6d5a-11e7-8d33-1e6abb2a0436.gif)
+![Auto enhance photo](https://user-images.githubusercontent.com/5923363/28404915-c244e942-6d5d-11e7-90af-8ab7481927b6.gif)
 
 ## Add dependencies to Gradle
 ```groovy
