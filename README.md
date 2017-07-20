@@ -1,5 +1,5 @@
 # PolarrAlbumAndroidSDK
-Polarr Android SDK for Smart Album (Picky) - Includes photo auto grouping, tagging, rating and etc.
+Polarr Android SDK for Smart Album (Picky) - Includes photo auto grouping, tagging, rating and etc. The SDK serves as an arsenal for Android developers to leverage deep learning and machine learning to organize and enhance a set of photos. Polarr currently has an iOS App called [Picky](https://itunes.apple.com/us/app/picky-smart-collage-maker-and-batch-photo-editor/id1156687266?mt=8) which showcases all functions of the SDK plus some. This SDK is a subset of the functions provided by Picky, and is currently noted as an alpha release. In the coming months, more functionalities will be added and feature requests are welcomed.
 
 This SDK includes a starter project (co.polarr.albumsdkdemo) that calls the Android SDK.
 
