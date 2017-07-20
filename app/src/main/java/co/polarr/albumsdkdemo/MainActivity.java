@@ -5,23 +5,28 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +43,8 @@ import co.polarr.utils.ThreadManager;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PHOTO = 1;
     private static final int REQUEST_PHOTOS = 2;
+    private static final int REQUEST_AUTOENHANCE = 3;
+    private static final int REQUEST_EXPORT = 4;
 
     /**
      * debug log view
@@ -57,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
      * open grouped photos view
      */
     private Button btnGroupResult;
+    /**
+     * rendered photo to export
+     */
+    private Bitmap toExportPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +144,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectPhotoForAutoEnhance() {
-        if (!checkAndRequirePermission(REQUEST_PHOTO)) {
+        if (!checkAndRequirePermission(REQUEST_AUTOENHANCE)) {
             return;
         }
         clearOutput();
+        btnGroupResult.setVisibility(View.GONE);
+        autoEnhanceView.setVisibility(View.GONE);
+
         new ChooserDialog().with(this)
                 .withFilter(false, false, "jpg", "jpeg", "png")
                 .withStartFile(Environment.getExternalStorageDirectory().getPath() + "/DCIM")
@@ -144,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChoosePath(String path, File pathFile) {
                         final Map<String, Object> autoEnhanceStates = Processing.processingAutoEnhance(pathFile.getPath());
-                        output("[left] Original [right] Auto Enhanced");
+                        output("[Top] Original [Bottom] Auto Enhanced. Long click the photo to export.");
                         updateThumbnail(pathFile);
 
                         final Bitmap imageBitmap = ImageLoadUtil.decodeThumbBitmapForFile(pathFile.getPath(), Integer.MAX_VALUE, Integer.MAX_VALUE, ImageLoadUtil.getImageOrientation(pathFile.getPath()));
@@ -157,6 +171,20 @@ public class MainActivity extends AppCompatActivity {
                                         imageBitmap.recycle();
                                         autoEnhanceView.setVisibility(View.VISIBLE);
                                         autoEnhanceView.setImageBitmap(bitmap);
+
+                                        if (toExportPhoto != null && !toExportPhoto.isRecycled()) {
+                                            toExportPhoto.recycle();
+                                        }
+
+                                        toExportPhoto = bitmap;
+
+                                        autoEnhanceView.setOnLongClickListener(new View.OnLongClickListener() {
+                                            @Override
+                                            public boolean onLongClick(View v) {
+                                                exportImage();
+                                                return true;
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -165,6 +193,44 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .build()
                 .show();
+    }
+
+    private void exportImage() {
+        if (!checkAndRequirePermission(REQUEST_EXPORT)) {
+            return;
+        }
+
+        if (toExportPhoto == null || toExportPhoto.isRecycled()) {
+            output("The auto enhanced photo is recyled, please do auto enhance again.");
+        }
+
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File storageDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "PolarrDemo");
+
+            //Creating the storage directory if it doesn't exist
+            if (!storageDirectory.exists()) {
+                storageDirectory.mkdirs();
+            }
+
+            //Creating the temporary storage file
+            File targetImagePath = File.createTempFile(timeStamp + "_", ".jpg", storageDirectory);
+            OutputStream outputStream = new FileOutputStream(targetImagePath);
+            toExportPhoto.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.close();
+
+            //Rescanning the icon_library/gallery so it catches up with our own changes
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(targetImagePath));
+            sendBroadcast(mediaScanIntent);
+
+            Toast.makeText(MainActivity.this, String.format(Locale.ENGLISH, "Saved to: %s", targetImagePath.getAbsolutePath()), Toast.LENGTH_LONG).show();
+            output(String.format(Locale.ENGLISH, "Saved to: %s", targetImagePath.getAbsolutePath()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            output("Export photo faild. Please check the log in console.");
+        }
     }
 
     private boolean checkAndRequirePermission(int permissionRequestId) {
@@ -192,6 +258,14 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == REQUEST_PHOTOS && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 selectPhotos();
+            }
+        } else if (requestCode == REQUEST_AUTOENHANCE && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectPhotoForAutoEnhance();
+            }
+        } else if (requestCode == REQUEST_EXPORT && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportImage();
             }
         }
     }
