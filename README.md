@@ -10,12 +10,20 @@ The SDK included in this repository must not be used for any commercial purposes
 
 ## Functionalities
 ### Tagging a photo
+The SDK performs image classification and produce the top 3 most likely labels for the given photo. It also returns an overall rating value from 1.0 to 5.0 (where 1.0 is the worst and 5.0 is the best), which is based on the following metrics:
+- Composition (how well subjects within the photos are placed)
+- Colorfulness
+- Exposure (well-exposed photo or poorly exposed: either under-exposed or over-exposed)
+- Clarity (bluriness of the photo)
+- Expression (if faces are detected, are they smiling, are the eyes open)
 ![Tagging a photo](https://user-images.githubusercontent.com/5923363/28239964-69369e06-69aa-11e7-9092-3ca7d0901378.gif)
 
 ### Grouping photos
+Similar photos are grouped together based on their subjects, features, colors, and other metrics.
 ![Grouping photos](https://user-images.githubusercontent.com/5923363/28239963-66cebc84-69aa-11e7-9809-47147ec6ac26.gif)
 
-### Auto enhance photo
+### Auto enhance photos
+Photos can be auto-enhanced based on their extracted features.
 ![Auto enhance photo](https://user-images.githubusercontent.com/5923363/28402063-60eb0148-6d50-11e7-8b1b-de49e46b8dfa.gif)
 
 ## Add dependencies to Gradle
