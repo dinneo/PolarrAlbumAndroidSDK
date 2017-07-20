@@ -1,5 +1,5 @@
 # PolarrAlbumAndroidSDK
-Polarr Android SDK for Smart Album (Picky) - Includes photo auto grouping, duplicate removal, tagging, rating and etc.
+Polarr Android SDK for Smart Album (Picky) - Includes photo auto grouping, tagging, rating and etc.
 
 This SDK includes a starter project (co.polarr.albumsdkdemo) that calls the Android SDK.
 
