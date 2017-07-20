@@ -1,5 +1,5 @@
 # 霹雳相册AndroidSDK
-霹雳相册 (Picky) - 通过先进的照片分析引擎对照片进行分类，打标签，打分。同时进行照片自动增强. 本SDK通过运用深度学习以及机器学习技术，提供给Android开发者照片分析以及图片增强功能。您可以在苹果应用商店下载到《霹雳相册》[霹雳相册](https://itunes.apple.com/cn/app/picky-smart-collage-maker-and-batch-photo-editor/id1156687266?mt=8)。本SDK包含了霹雳相册的核心功能 
+霹雳相册 (Picky) - 通过先进的照片分析引擎对照片进行分类，打标签，打分。同时进行照片自动增强. 本SDK通过运用深度学习以及机器学习技术，提供给Android开发者照片分析以及图片增强功能。您可以在苹果应用商店下载到[《霹雳相册》](https://itunes.apple.com/cn/app/picky-smart-collage-maker-and-batch-photo-editor/id1156687266?mt=8)。本SDK包含了霹雳相册的核心功能 
 
 本SDK目前尚为Alpha版，包含了霹雳相册的部分功能。未来几个月内，我们将持续更新更多的功能
 
