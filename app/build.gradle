@@ -45,6 +45,10 @@ dependencies {
     compile(name: 'utils-release', ext: 'aar')
     compile(name: 'tagging-release', ext: 'aar')
     compile(name: 'processing-release', ext: 'aar')
+    compile (name: 'renderer-release', ext: 'aar')
+
+    // fast json decoder for native render
+    compile 'com.alibaba:fastjson:1.1.55.android'
 
     compile 'org.tensorflow:tensorflow-android:+'
     // Face detection lib

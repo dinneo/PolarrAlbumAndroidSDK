@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +28,8 @@ import java.util.Map;
 
 import co.polarr.processing.POGenerateHClusterCallbackFunction;
 import co.polarr.processing.Processing;
+import co.polarr.renderer.render.OnThumbnailBitmapCallback;
+import co.polarr.renderer.render.RenderUtil;
 import co.polarr.tagging.TaggingUtil;
 import co.polarr.utils.ImageLoadUtil;
 import co.polarr.utils.MemoryCache;
@@ -47,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private ImageView thumbnailView;
     /**
+     * show auto enhanced photo
+     */
+    private ImageView autoEnhanceView;
+    /**
      * open grouped photos view
      */
     private Button btnGroupResult;
@@ -59,9 +66,11 @@ public class MainActivity extends AppCompatActivity {
         outputView = (TextView) findViewById(R.id.tf_output);
         outputCon = (ScrollView) findViewById(R.id.sv_output);
         thumbnailView = (ImageView) findViewById(R.id.iv_thumbnail);
+        autoEnhanceView = (ImageView) findViewById(R.id.iv_autoenhance);
         btnGroupResult = (Button) findViewById(R.id.btn_group_result);
 
-        btnGroupResult.setEnabled(false);
+        autoEnhanceView.setVisibility(View.GONE);
+        btnGroupResult.setVisibility(View.GONE);
 
         findViewById(R.id.btn_import).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 selectPhoto();
+            }
+        });
+        findViewById(R.id.btn_auto_enhance).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPhotoForAutoEnhance();
             }
         });
     }
@@ -111,6 +126,41 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChoosePath(String path, File pathFile) {
                         ratingPhoto(pathFile);
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private void selectPhotoForAutoEnhance() {
+        if (!checkAndRequirePermission(REQUEST_PHOTO)) {
+            return;
+        }
+        clearOutput();
+        new ChooserDialog().with(this)
+                .withFilter(false, false, "jpg", "jpeg", "png")
+                .withStartFile(Environment.getExternalStorageDirectory().getPath() + "/DCIM")
+                .withChosenListener(new ChooserDialog.Result() {
+                    @Override
+                    public void onChoosePath(String path, File pathFile) {
+                        final Map<String, Object> autoEnhanceStates = Processing.processingAutoEnhance(pathFile.getPath());
+                        output("[left] Original [right] Auto Enhanced");
+                        updateThumbnail(pathFile);
+
+                        final Bitmap imageBitmap = ImageLoadUtil.decodeThumbBitmapForFile(pathFile.getPath(), Integer.MAX_VALUE, Integer.MAX_VALUE, ImageLoadUtil.getImageOrientation(pathFile.getPath()));
+                        RenderUtil.renderThumbnailBitmap(imageBitmap, imageBitmap.getWidth(), imageBitmap.getHeight(), getResources(), autoEnhanceStates, new OnThumbnailBitmapCallback() {
+                            @Override
+                            public void onExport(final Bitmap bitmap) {
+                                ThreadManager.executeOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageBitmap.recycle();
+                                        autoEnhanceView.setVisibility(View.VISIBLE);
+                                        autoEnhanceView.setImageBitmap(bitmap);
+                                    }
+                                });
+                            }
+                        });
                     }
                 })
                 .build()
@@ -192,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void ratingPhoto(final File file) {
         clearOutput();
+        btnGroupResult.setVisibility(View.GONE);
+        autoEnhanceView.setVisibility(View.GONE);
 
         ThreadManager.executeOnAsyncThread(new Runnable() {
             @Override
@@ -200,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
                 updateThumbnail(file);
                 Map<String, Object> result = Processing.processingFile(MainActivity.this, file.getPath());
                 output("Rating: " + result.get("rating_all"));
+                final Map<String, Object> autoEnhanceStates = Processing.processingAutoEnhance(result);
+                output("Auto Enhance: \n\t" + autoEnhanceStates);
 
                 output("tagging...");
                 Map<String, Object> taggingResult = TaggingUtil.tagPhoto(getAssets(), file);
@@ -218,7 +272,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void grouping(final File folderPath) {
         clearOutput();
-        btnGroupResult.setEnabled(false);
+        btnGroupResult.setVisibility(View.GONE);
+        autoEnhanceView.setVisibility(View.GONE);
+
 
         ThreadManager.executeOnAsyncThread(new Runnable() {
             @Override
@@ -281,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
                 ThreadManager.executeOnMainThread(new Runnable() {
                     @Override
                     public void run() {
-                        btnGroupResult.setEnabled(true);
+                        btnGroupResult.setVisibility(View.VISIBLE);
                         btnGroupResult.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

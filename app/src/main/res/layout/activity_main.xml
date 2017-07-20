@@ -1,56 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="co.polarr.albumsdkdemo.MainActivity">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/btn_con"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/btn_con"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_tag"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="Tagging" />
 
-            <Button
-                android:id="@+id/btn_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tagging" />
+        <Button
+            android:id="@+id/btn_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grouping" />
 
-            <Button
-                android:id="@+id/btn_import"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Grouping" />
+        <Button
+            android:id="@+id/btn_group_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grouping result" />
 
-            <Button
-                android:id="@+id/btn_group_result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Grouping result" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btn_auto_enhance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auto enhance" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/preview_con"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/btn_con"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@id/btn_con"
-            android:scaleType="centerInside" />
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-        <ScrollView
-            android:id="@+id/sv_output"
+        <ImageView
+            android:id="@+id/iv_autoenhance"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/iv_thumbnail">
+            android:layout_weight="1"
+            android:visibility="gone" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tf_output"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
-    </RelativeLayout>
-</android.support.constraint.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/sv_output"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/preview_con">
+
+        <TextView
+            android:id="@+id/tf_output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+</RelativeLayout>

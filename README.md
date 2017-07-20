@@ -15,6 +15,9 @@ The SDK included in this repository must not be used for any commercial purposes
 ### Grouping photos
 ![Grouping photos](https://user-images.githubusercontent.com/5923363/28239963-66cebc84-69aa-11e7-9809-47147ec6ac26.gif)
 
+### Auto enhance photo
+![Auto enhance photo](https://user-images.githubusercontent.com/5923363/28402063-60eb0148-6d50-11e7-8b1b-de49e46b8dfa.gif)
+
 ## Add dependencies to Gradle
 ```groovy
 repositories {
@@ -101,4 +104,40 @@ for (List<Integer> subGroup : result) {
     }
     groupedFiles.add(subFiles);
 }
+```
+
+## Auto enhance photo
+### Get auto enhanced render states
+
+```java
+String filePath;
+Map<String, Object> autoEnhanceStates = Processing.processingAutoEnhance(filePath);
+```
+
+### Use the render states to render photo
+If need render the auto enhanced photo, you should add the polarr render module in gradle
+```groovy
+dependencies {
+    compile (name: 'renderer-release', ext: 'aar')
+    // fast json decoder for native render
+    compile 'com.alibaba:fastjson:1.1.55.android'
+}
+```
+
+```java
+ImageView autoEnhanceImageView; // to show auto enhanced photo
+// get scaled bitmap
+Bitmap imageBitmap; // bitmap to render
+RenderUtil.renderThumbnailBitmap(imageBitmap, imageBitmap.getWidth(), imageBitmap.getHeight(), getResources(), autoEnhanceStates, new OnThumbnailBitmapCallback() {
+    @Override
+    public void onExport(final Bitmap bitmap) {
+        // callback will be on render thread
+        ThreadManager.executeOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                autoEnhanceImageView.setImageBitmap(bitmap);
+            }
+        });
+    }
+});
 ```
