@@ -17,7 +17,7 @@ The SDK performs image classification and produce the top 3 most likely labels f
 - Clarity (bluriness of the photo)
 - Expression (if faces are detected, are they smiling, are the eyes open)
 
-![Tagging a photo](https://user-images.githubusercontent.com/5923363/28239964-69369e06-69aa-11e7-9092-3ca7d0901378.gif)
+![Tagging a photo](https://user-images.githubusercontent.com/5923363/28441168-0508b1c2-6ddc-11e7-8e0f-205ad2605d29.gif)
 
 ### Grouping photos
 Similar photos are grouped together based on their subjects, features, colors, and other metrics.
