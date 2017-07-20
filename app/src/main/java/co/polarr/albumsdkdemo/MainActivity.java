@@ -326,13 +326,18 @@ public class MainActivity extends AppCompatActivity {
                 updateThumbnail(file);
                 Map<String, Object> result = Processing.processingFile(MainActivity.this, file.getPath());
                 output("Rating: " + result.get("rating_all"));
-                final Map<String, Object> autoEnhanceStates = Processing.processingAutoEnhance(result);
-                output("Auto Enhance: \n\t" + autoEnhanceStates);
+                for (String label : result.keySet()) {
+                    if (label.startsWith("metric_")) {
+                        String showLable = label.substring("metric_".length());
+                        output("\t" + showLable + ": " + result.get(label));
 
+                    }
+                }
                 output("tagging...");
                 Map<String, Object> taggingResult = TaggingUtil.tagPhoto(getAssets(), file);
                 result.putAll(taggingResult);
-                output("\tLabel_top3: " + taggingResult.get("label_top3"));
+
+                output("\tLabel_top3: " + taggingResult.get("label_top3_output"));
 
                 output("end processing.");
             }
